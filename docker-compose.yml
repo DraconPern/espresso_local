@@ -54,7 +54,7 @@ services:
       USE_CASSANDRA: "true"
       CASSANDRA_CONTACTPOINTS: elassandra
       AMQP_URL: amqp://rabbitmq
-	  GLOBAL_ADMIN: email:user@domain.com
+      GLOBAL_ADMIN: email:user@domain.com
   
 volumes:
   minio_data:
