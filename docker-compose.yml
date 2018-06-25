@@ -1,0 +1,63 @@
+version: '2'
+
+services:
+  minio:
+    image: minio/minio
+    volumes:
+      - minio_data:/data
+    command: minio server /data
+    restart: always
+    environment:
+      MINIO_ACCESS_KEY: someaccesskey
+      MINIO_SECRET_KEY: somesecretkey    
+
+  rabbitmq:
+    image: rabbitmq
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: always
+      
+  elassandra:
+    image: strapdata/elassandra
+    volumes:
+      - elassandra_data:/var/lib/cassandra
+    restart: always
+
+  mariadb:
+    image: mariadb
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: espresso
+      MYSQL_USER: espresso
+      MYSQL_PASSWORD: espresso
+
+  espresso_web:
+    depends_on:
+      - minio
+      - rabbitmq
+      - elassandra
+      - mariadb
+    image: espressomedical/espresso_web
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      LOCAL_DEVELOPMENT: "true"
+      S3_ENDPOINT: http://minio
+      AWS_ACCESS_KEY_ID: someaccesskey
+      AWS_SECRET_ACCESS_KEY: somesecretkey
+      DCM2IMG_URL: http://espresso_dcm2img
+      DATABASE_URL: mysql://espresso:espresso@mariadb/espresso
+      USE_CASSANDRA: "true"
+      CASSANDRA_CONTACTPOINTS: elassandra
+      AMQP_URL: amqp://rabbitmq
+	  GLOBAL_ADMIN: email:user@domain.com
+  
+volumes:
+  minio_data:
+  rabbitmq_data:
+  elassandra_data:
+  mysql_data:
