@@ -37,16 +37,16 @@ services:
   espresso_scp:
     image: espressomedical/espresso_scp
     volumes:
-      - scp_config:/etc/espresso_scp.conf
+      - ${PWD}/espresso_scp.conf:/etc/espresso_scp.conf
       - scp_data:/var/lib/espresso_scp
     ports:
       - "8082:8082"
       - "104:104"
     restart: always
     environment:
-      WebUrl: http://espresso_web:8080
+      WebUrl: http://host.docker.internal:8080
       ApiUrl: http://espresso_web:8080
-      SocketIOUrl: http://espresso_web:8080
+      SocketIOUrl: http://host.docker.internal:8080
       HttpListeningPort: 8082
 
   espresso_web:
@@ -72,10 +72,12 @@ services:
       AMQP_URL: amqp://rabbitmq
       GLOBAL_ADMIN: email:user@domain.com
 
+volume_driver: local
+
 volumes:
   minio_data:
   rabbitmq_data:
   elassandra_data:
   mysql_data:
-  scp_config:
+  espresso_scp.conf:
   scp_data:
