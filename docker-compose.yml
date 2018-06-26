@@ -34,28 +34,12 @@ services:
       MYSQL_USER: espresso
       MYSQL_PASSWORD: espresso
 
-  espresso_scp:
-    image: espressomedical/espresso_scp
-    volumes:
-      - ${PWD}/espresso_scp.conf:/etc/espresso_scp.conf
-      - scp_data:/var/lib/espresso_scp
-    ports:
-      - "8082:8082"
-      - "104:104"
-    restart: always
-    environment:
-      WebUrl: http://host.docker.internal:8080
-      ApiUrl: http://espresso_web:8080
-      SocketIOUrl: http://host.docker.internal:8080
-      HttpListeningPort: 8082
-
   espresso_web:
     depends_on:
       - minio
       - rabbitmq
       - elassandra
       - mariadb
-      - espresso_scp
     image: espressomedical/espresso_web
     ports:
       - "8080:8080"
@@ -79,5 +63,3 @@ volumes:
   rabbitmq_data:
   elassandra_data:
   mysql_data:
-  espresso_scp.conf:
-  scp_data:
