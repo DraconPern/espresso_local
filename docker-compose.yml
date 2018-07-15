@@ -56,6 +56,23 @@ services:
       AMQP_URL: amqp://rabbitmq
       GLOBAL_ADMIN: email:user@domain.com
 
+  espresso_scp:
+    depends_on:
+      - espresso_web
+    image: espressomedical/espresso_scp
+    ports:
+      - "8082:8082"
+      - "104:104"
+    volumes:
+      - espresso_scp_data:/var/lib/espresso_scp
+    restart: always
+    environment:
+      ESPRESSO_SCP_WebUrl: http://espresso_web:8080
+      ESPRESSO_SCP_ApiUrl: http://espresso_web:8080
+      ESPRESSO_SCP_SocketIOUrl: http://espresso_web:8080
+      ESPRESSO_SCP_HttpListeningPort: 8082
+      ESPRESSO_SCP_DICOMListeningPort: 104
+      
 volume_driver: local
 
 volumes:
@@ -63,3 +80,4 @@ volumes:
   rabbitmq_data:
   elassandra_data:
   mysql_data:
+  espresso_scp_data:
